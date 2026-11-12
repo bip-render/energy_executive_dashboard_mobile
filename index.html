@@ -321,10 +321,10 @@ const DS={
  month:build(281.3,264.9,{arezzo:-13.6,b:-10.3,a:0,c:5.8})
 };
 const KP={
- oggi:{pot:4.8,ris:1.6,prod:21.4,pr:76.2,co2:83.8,km:15712,d:{pot:3.3,ris:-6.2,prod:-4.8,pr:1.4,co2:1.1,km:-11.6}},
- '7gg':{pot:2.4,ris:1.2,prod:19.3,pr:72.3,co2:73.5,km:38906,d:{pot:3.3,ris:-5.3,prod:-4.8,pr:1.6,co2:1.3,km:-8.6}},
- '30gg':{pot:2.1,ris:1.4,prod:20.2,pr:74.5,co2:79.4,km:33120,d:{pot:2.1,ris:-3.8,prod:-2.9,pr:.9,co2:.7,km:-5.2}},
- ytd:{pot:3.4,ris:2.1,prod:24.6,pr:78.1,co2:91.2,km:36540,d:{pot:1.8,ris:-2.4,prod:-1.7,pr:.6,co2:.5,km:-3.1}}
+ oggi:{pot:4.8,ris:1.6,prod:21.4,pr:76.2,co2:83.8,km:15712,d:{pot:3.3,ris:-6.2,prod:-4.8,pr:1.4,co2:-4.8,km:-4.8}},
+ '7gg':{pot:2.4,ris:1.2,prod:19.3,pr:72.3,co2:73.5,km:38906,d:{pot:3.3,ris:-5.3,prod:-4.8,pr:1.6,co2:-4.8,km:-4.8}},
+ '30gg':{pot:2.1,ris:1.4,prod:20.2,pr:74.5,co2:79.4,km:33120,d:{pot:2.1,ris:-3.8,prod:-2.9,pr:.9,co2:-2.9,km:-2.9}},
+ ytd:{pot:3.4,ris:2.1,prod:24.6,pr:78.1,co2:91.2,km:36540,d:{pot:1.8,ris:-2.4,prod:-1.7,pr:.6,co2:-1.7,km:-1.7}}
 };
 const TILT={arezzo:-3,b:-1,a:1.5,c:2.5};
 const PLBL={oggi:'oggi','7gg':'7gg','30gg':'30gg',ytd:'YTD'};
@@ -431,7 +431,7 @@ const HAND=`<svg width="18" height="20" viewBox="0 0 18 20" style="position:abso
 const CURSOR=`<svg width="13" height="14" viewBox="0 0 14 15"><path d="M2 1l9 5-4 1.2L5.6 11z" fill="#fff"/></svg>`;
 
 /* ====== render ====== */
-const PAGES={overview:'Executive Overview',scost:'Scostamento vs Piano',detail:'Impianto Fotovoltaico Arezzo'};
+const PAGES={overview:'Executive Overview',scost:'Scostamento vs Nominale',detail:'Impianto Fotovoltaico Arezzo'};
 function header(){
  const dp=detailPlant();
  let title=S.page==='detail'?dp.title:PAGES[S.page];
@@ -455,7 +455,7 @@ function header(){
 function menuPanel(){
  const m=S.menu;if(!m)return '';
  if(m==='viste'){
-  const it=[['overview','Overview'],['scost','Scostamento vs Piano'],['detail','Dettaglio impianto']];
+  const it=[['overview','Overview'],['scost','Scostamento vs Nominale'],['detail','Dettaglio impianto']];
   return `<div class="panel" style="left:914px;top:48px;width:246px">${it.map(([k,l])=>`<button class="item ${S.page===k?'sel':''}" data-act="page" data-v="${k}">${l}</button>`).join('')}<button class="close" data-act="menu" data-v="">Chiudi ×</button></div>`;
  }
  if(m==='impianti'){
@@ -491,7 +491,7 @@ function barChart({w,items,fmtV,labelW,rowH=30,bh=22,diverge=false,lbl=60}){
 }
 function plantPop(id){
  const p=PBY[id],ds=DS[S.cmp==='custom'?'oggi':S.period],d=pct(ds.act[id],ds.plan[id]);
- return `<img src="${ICON.building}" alt=""><b>Impianto FV</b><b>${esc(p.short)}</b><span class="mw">${fmt(p.mwp,1)} MW</span><br><span class="tc">Fotovoltaico</span><div class="pd">Produzione vs Piano: <span style="font-weight:800;color:${dcol(d)}">${fmtS(d)}%</span><br><span class="tc">${p.region} · Zona ${p.zone}</span><br><span class="tc" style="font-size:11px">Clic sulla bolla per filtrare</span></div>`;
+ return `<img src="${ICON.building}" alt=""><b>Impianto FV</b><b>${esc(p.short)}</b><span class="mw">${fmt(p.mwp,1)} MW</span><br><span class="tc">Fotovoltaico</span><div class="pd">Potenza Prodotta vs Nominale: <span style="font-weight:800;color:${dcol(d)}">${fmtS(d)}%</span><br><span class="tc">${p.region} · Zona ${p.zone}</span><br><span class="tc" style="font-size:11px">Clic sulla bolla per filtrare</span></div>`;
 }
 function mapBlock(M){
  const mw=MAP.w,mh=MAP.h,H=462,sc=H/mh,W=mw*sc,ox=(440-W)/2,oy=18;
@@ -539,7 +539,7 @@ function overview(){
  let h=compareBox();
  const kw=165.5,kx=[0,1,2,3].map(i=>515+i*(kw+14));
  h+=kpiCard(kx[0],180,kw,'Potenza Media',`${fmt(v.pot,1)} MW`,d.pot,'bulb',1);
- h+=kpiCard(kx[1],180,kw,'Produzione Energia Media',`${fmt(v.prod,1)} MWh`,d.prod,'sun',1);
+ h+=kpiCard(kx[1],180,kw,'Produzione Energia Media',`${fmt(v.prod,1)} <span style="font-size:.55em;font-weight:600">MWh/giorno</span>`,d.prod,'sun',1);
  h+=kpiCard(kx[2],180,kw,'Performance ratio',`${fmt(v.pr,1)}%`,d.pr,'growth',1);
  h+=kpiCard(kx[3],180,kw,'CO₂ evitata',`${fmt(v.co2,1)} t`,d.co2,'co2',1);
  h+=mapBlock(M)+statusBox(M.sel);
@@ -547,18 +547,18 @@ function overview(){
  const unit=(S.cmp==='custom'||S.period==='7gg'||S.period==='30gg')?' MWh/giorno':' MWh';
  const dec=S.period==='ytd'&&S.cmp!=='custom'?0:1;
  h+=`<div class="card" style="left:515px;top:281px;width:400px;height:331px"></div>`;
- h+=`<div class="abs" style="left:533px;top:288px;font-size:20px;font-weight:700">Produzione vs Piano · ${esc(S.cmp==='custom'?'A':M.title)}</div>`;
+ h+=`<div class="abs" style="left:533px;top:287px;font-size:18px;font-weight:700;white-space:nowrap">Potenza Prodotta vs Nominale</div><div class="abs" style="left:533px;top:308px;font-size:12px;color:#555;white-space:nowrap">${esc(S.cmp==='custom'?'A':M.title)}</div>`;
  h+=`<button class="btn-det" style="left:808px;top:290px" data-act="page" data-v="scost">Dettaglio</button>`;
  h+=`<div class="abs big" style="left:533px;top:318px;font-size:52px;color:${dp<0?C.red:C.verde}">${fmtS(dp)}%</div>`;
  h+=`<div class="abs" style="left:533px;top:378px;font-size:14px;color:#555;white-space:nowrap">${fmtS(dm,dec)}${unit} rispetto alla produzione attesa</div>`;
- h+=`<div class="abs" style="left:533px;top:402px">${barChart({w:366,labelW:84,rowH:32,bh:24,lbl:84,items:[{label:'Produzione',value:a.act,color:C.azz},{label:'Piano',value:a.plan,color:C.gf}],fmtV:x=>fmt(x,dec)+' MWh'})}</div>`;
+ h+=`<div class="abs" style="left:533px;top:402px">${barChart({w:366,labelW:84,rowH:32,bh:24,lbl:84,items:[{label:'Prodotta',value:a.act,color:C.azz},{label:'Nominale',value:a.plan,color:C.gf}],fmtV:x=>fmt(x,dec)+' MWh'})}</div>`;
  const rows=[...M.per].sort((x,y)=>x.d-y.d);
  h+=`<div class="abs dtab" style="left:533px;top:476px;width:366px"><div class="dh"><span>Scostamento per impianto</span><span>Δ %</span></div>${rows.map(r=>`<div class="rowp link" data-act="gotodetail" data-v="${r.p.id}"><span>${r.p.short}</span><b style="color:${dcol(r.d)}">${fmtS(r.d)}%</b></div>`).join('')}${rows.length?'':'<div class="empty" style="position:static;padding:6px 0">Nessun impianto selezionato</div>'}</div>`;
  // km
  h+=`<div class="card" style="left:929px;top:281px;width:290px;height:104px"></div><div class="abs" style="left:945px;top:288px;font-size:21px;font-weight:700">Km treno equivalenti</div><div style="position:absolute;left:1178px;top:292px;width:34px;height:30px">${TRAIN('#6b6e80').replace('class="gi"','')}</div>`;
  h+=`<div class="abs big" style="left:945px;top:322px;font-size:31px">${fmt(v.km,0)} km</div><div class="abs ${d.km>=0?'up':'dn'}" style="left:945px;top:361px;font-size:14px">${d.km>=0?'▲':'▼'} ${fmt(Math.abs(d.km),1)}% vs periodo precedente</div>`;
  // zone: bar chart
- h+=`<div class="card" style="left:929px;top:399px;width:290px;height:213px"></div><div class="abs" style="left:945px;top:407px;font-size:21px;font-weight:700">Zone</div><div class="abs" style="left:945px;top:435px;font-size:13.5px;color:#555">Per zona (MW)</div>`;
+ h+=`<div class="card" style="left:929px;top:399px;width:290px;height:213px"></div><div class="abs" style="left:945px;top:407px;font-size:21px;font-weight:700">Potenza Nominale</div><div class="abs" style="left:945px;top:435px;font-size:13.5px;color:#555">Per zona (MW)</div>`;
  const zs=['Centro','Nord','Sud'].map(z=>({z,v:M.sel.filter(p=>p.zone===z).reduce((s,p)=>s+p.mwp,0)}));
  h+=`<div class="abs" style="left:945px;top:462px">${barChart({w:258,labelW:56,rowH:40,bh:26,lbl:44,items:zs.map(x=>({label:x.z,value:x.v,color:C.vp,dim:false,act:'zona',v:x.z,tip:`${x.z}: ${fmt(x.v,1)} MW · clic per filtrare`})),fmtV:x=>fmt(x,1)})}</div>`;
  return h;
@@ -588,18 +588,18 @@ function scost(){
  const mc=monthCum(sel);
  h+=`<div class="card" style="left:61px;top:240px;width:572px;height:376px"></div><div class="abs" style="left:80px;top:249px;font-size:18.5px;font-weight:700">Mese corrente: produzione cumulata (MWh)</div>`;
  const cats=Array.from({length:28},(_,i)=>String(i+1));
- h+=`<div class="abs" style="left:68px;top:290px">`+lineChart('cum',{w:558,h:278,cats,series:[{name:'Produzione',color:C.azz,values:mc.act,markEvery:4},{name:'Piano',color:C.yel,values:mc.plan,markEvery:4}],xLabels:[0,4,8,12,16,20,24,27],xLabelEvery:99,fmtV:v=>fmt(v,1)+' MWh',tipTitle:i=>'Ottobre · giorno '+(i+1),tipExtra:i=>`<br>Δ vs piano: <b>${fmtS(pct(mc.act[i],mc.plan[i]))}%</b>`})+`</div>`;
- h+=`<div class="chartleg" style="left:61px;width:572px;top:586px"><span><i style="background:${C.azz}"></i>Produzione</span><span><i style="background:${C.yel}"></i>Piano</span></div>`;
+ h+=`<div class="abs" style="left:68px;top:290px">`+lineChart('cum',{w:558,h:278,cats,series:[{name:'Produzione',color:C.azz,values:mc.act,markEvery:4},{name:'Nominale',color:C.yel,values:mc.plan,markEvery:4}],xLabels:[0,4,8,12,16,20,24,27],xLabelEvery:99,fmtV:v=>fmt(v,1)+' MWh',tipTitle:i=>'Ottobre · giorno '+(i+1),tipExtra:i=>`<br>Δ vs Nominale: <b>${fmtS(pct(mc.act[i],mc.plan[i]))}%</b>`})+`</div>`;
+ h+=`<div class="chartleg" style="left:61px;width:572px;top:586px"><span><i style="background:${C.azz}"></i>Produzione</span><span><i style="background:${C.yel}"></i>Nominale</span></div>`;
  const ds=DS[S.period];
  const ttl={oggi:'oggi (MWh)','7gg':'media giornaliera 7 gg (MWh)','30gg':'media giornaliera 30 gg (MWh)',ytd:'da inizio anno (MWh)'}[S.period];
  h+=`<div class="card" style="left:647px;top:240px;width:572px;height:376px"></div><div class="abs" style="left:666px;top:249px;font-size:18.5px;font-weight:700">Dettaglio per impianto · ${ttl}</div>`;
  const dec=S.period==='ytd'?0:1;
  const rows=sel.map(p=>({p,a:ds.act[p.id],pl:ds.plan[p.id],d:pct(ds.act[p.id],ds.plan[p.id])}));
- h+=`<div class="abs" style="left:666px;top:292px;width:534px"><table class="t"><thead><tr><th>Impianto</th><th class="r">Produzione</th><th class="r">Piano</th><th class="r">Δ %</th><th>Nota</th></tr></thead><tbody>${rows.map(r=>`<tr class="row" data-act="gotodetail" data-v="${r.p.id}"><td>${r.p.short}</td><td class="r">${fmt(r.a,dec)}</td><td class="r">${fmt(r.pl,dec)}</td><td class="r" style="color:${dcol(r.d)};font-weight:700">${fmtS(r.d)}%</td><td>${r.p.note}</td></tr>`).join('')}</tbody></table>${rows.length?'':'<div class="empty" style="position:static;padding:14px 0">Nessun impianto selezionato</div>'}</div>`;
+ h+=`<div class="abs" style="left:666px;top:292px;width:534px"><table class="t"><thead><tr><th>Impianto</th><th class="r">Produzione</th><th class="r">Nominale</th><th class="r">Δ %</th><th>Nota</th></tr></thead><tbody>${rows.map(r=>`<tr class="row" data-act="gotodetail" data-v="${r.p.id}"><td>${r.p.short}</td><td class="r">${fmt(r.a,dec)}</td><td class="r">${fmt(r.pl,dec)}</td><td class="r" style="color:${dcol(r.d)};font-weight:700">${fmtS(r.d)}%</td><td>${r.p.note}</td></tr>`).join('')}</tbody></table>${rows.length?'':'<div class="empty" style="position:static;padding:14px 0">Nessun impianto selezionato</div>'}</div>`;
  const worst=[...rows].sort((a,b)=>a.d-b.d)[0];
  if(worst){
   const bad=worst.d<-2,dm=worst.a-worst.pl;
-  const txt=bad?`${worst.p.short}: ${fmtS(dm,dec)} MWh${worst.p.alarms.length?', con allarmi inverter':worst.p.note&&worst.p.note!=='–'?`, ${worst.p.note.toLowerCase()}`:''}`:'Tutti gli impianti in linea con il piano';
+  const txt=bad?`${worst.p.short}: ${fmtS(dm,dec)} MWh${worst.p.alarms.length?', con allarmi inverter':worst.p.note&&worst.p.note!=='–'?`, ${worst.p.note.toLowerCase()}`:''}`:'Tutti gli impianti in linea con il Nominale';
   h+=`<div class="insight" style="left:666px;top:580px;width:534px;background:${bad?'#FDECEF':'#E7F3DF'};color:${bad?C.red:'#2F6B12'}">${esc(txt)}</div>`;
  }
  return h;
@@ -612,9 +612,9 @@ function detail(){
  const act=ds.act[p.id],plan=ds.plan[p.id],pc=act/plan*100,dm=act-plan;
  const dec=S.period==='ytd'?0:1;
  const pl={oggi:'oggi','7gg':'7 gg (media/giorno)','30gg':'30 gg (media/giorno)',ytd:'YTD'}[S.period];
- h+=`<div class="card" style="left:61px;top:106px;width:270px;height:514px"></div><div class="abs" style="left:61px;width:270px;text-align:center;top:128px;font-size:16px;font-weight:800">Realizzato vs piano · ${pl}</div>`;
+ h+=`<div class="card" style="left:61px;top:106px;width:270px;height:514px"></div><div class="abs" style="left:61px;width:270px;text-align:center;top:128px;font-size:16px;font-weight:800">Potenza Prodotta vs Nominale · ${pl}</div>`;
  h+=`<div class="abs" style="left:93px;top:236px">${donut(pc)}</div><div class="abs big" style="left:93px;width:206px;text-align:center;top:322px;font-size:38px;font-weight:700">${fmt(pc,0)}%</div>`;
- h+=`<div class="abs" style="left:61px;width:270px;text-align:center;top:520px;font-size:14.5px;color:#444">Produzione ${fmt(act,dec)} MWh · Piano ${fmt(plan,dec)} MWh</div><div class="abs" style="left:61px;width:270px;text-align:center;top:543px;font-size:14.5px;font-weight:800;color:${dm<0?C.red:C.verde}">${fmtS(dm,dec)} MWh vs produzione attesa</div>`;
+ h+=`<div class="abs" style="left:61px;width:270px;text-align:center;top:520px;font-size:14.5px;color:#444">Produzione ${fmt(act,dec)} MWh · Nominale ${fmt(plan,dec)} MWh</div><div class="abs" style="left:61px;width:270px;text-align:center;top:543px;font-size:14.5px;font-weight:800;color:${dm<0?C.red:C.verde}">${fmtS(dm,dec)} MWh vs produzione attesa</div>`;
  let cats,A,P,ttl,xe=1;
  const sc=(arr,t)=>{const m=arr.reduce((s,x)=>s+x,0)/arr.length;return arr.map(x=>x*t/m);};
  let kind;
@@ -707,10 +707,10 @@ function mOverview(){
  const unit=(S.cmp==='custom'||S.period==='7gg'||S.period==='30gg')?' MWh/giorno':' MWh';
  const dec=S.period==='ytd'&&S.cmp!=='custom'?0:1;
  const rows=[...M.per].sort((x,y)=>x.d-y.d);
- h+=`<section class="mcard"><div class="mc-h"><h3>Produzione vs Piano · ${esc(S.cmp==='custom'?'A':M.title)}</h3><button class="mlink" data-act="page" data-v="scost">Dettaglio ›</button></div><div class="m-big" style="color:${dp<0?C.red:C.verde}">${fmtS(dp)}%</div><div class="m-note">${fmtS(dm,dec)}${unit} rispetto alla produzione attesa</div>${barChart({w:inner,labelW:84,rowH:34,bh:24,lbl:84,items:[{label:'Produzione',value:a.act,color:C.azz},{label:'Piano',value:a.plan,color:C.gf}],fmtV:x=>fmt(x,dec)+' MWh'})}<div class="mtab"><div class="mth"><span>Scostamento per impianto</span><span>Δ %</span></div>${rows.map(r=>`<button class="mrow" data-act="gotodetail" data-v="${r.p.id}"><span>${r.p.short}</span><b style="color:${dcol(r.d)}">${fmtS(r.d)}%</b></button>`).join('')||'<div class="m-empty">Nessun impianto selezionato</div>'}</div></section>`;
- h+=`<div class="m-grid">${mk('Potenza Media',`${fmt(v.pot,1)} MW`,d.pot,'bulb')}${mk('Produzione En. Media',`${fmt(v.prod,1)} MWh`,d.prod,'sun')}${mk('Performance ratio',`${fmt(v.pr,1)}%`,d.pr,'growth')}${mk('CO₂ evitata',`${fmt(v.co2,1)} t`,d.co2,'co2')}${mk('Km treno equiv.',`${fmt(v.km,0)} km`,d.km,'train')}</div>`;
+ h+=`<section class="mcard"><div class="mc-h"><h3>Potenza Prodotta vs Nominale · ${esc(S.cmp==='custom'?'A':M.title)}</h3><button class="mlink" data-act="page" data-v="scost">Dettaglio ›</button></div><div class="m-big" style="color:${dp<0?C.red:C.verde}">${fmtS(dp)}%</div><div class="m-note">${fmtS(dm,dec)}${unit} rispetto alla produzione attesa</div>${barChart({w:inner,labelW:84,rowH:34,bh:24,lbl:84,items:[{label:'Prodotta',value:a.act,color:C.azz},{label:'Nominale',value:a.plan,color:C.gf}],fmtV:x=>fmt(x,dec)+' MWh'})}<div class="mtab"><div class="mth"><span>Scostamento per impianto</span><span>Δ %</span></div>${rows.map(r=>`<button class="mrow" data-act="gotodetail" data-v="${r.p.id}"><span>${r.p.short}</span><b style="color:${dcol(r.d)}">${fmtS(r.d)}%</b></button>`).join('')||'<div class="m-empty">Nessun impianto selezionato</div>'}</div></section>`;
+ h+=`<div class="m-grid">${mk('Potenza Media',`${fmt(v.pot,1)} MW`,d.pot,'bulb')}${mk('Produzione En. Media',`${fmt(v.prod,1)} <span style="font-size:.55em;font-weight:600">MWh/giorno</span>`,d.prod,'sun')}${mk('Performance ratio',`${fmt(v.pr,1)}%`,d.pr,'growth')}${mk('CO₂ evitata',`${fmt(v.co2,1)} t`,d.co2,'co2')}${mk('Km treno equiv.',`${fmt(v.km,0)} km`,d.km,'train')}</div>`;
  const zs=['Centro','Nord','Sud'].map(z=>({z,v:M.sel.filter(p=>p.zone===z).reduce((s,p)=>s+p.mwp,0)}));
- h+=`<section class="mcard"><div class="mc-h"><h3>Zone</h3><span class="m-un">Per zona (MW)</span></div>${barChart({w:inner,labelW:60,rowH:42,bh:28,lbl:46,items:zs.map(x=>({label:x.z,value:x.v,color:C.vp,act:'zona',v:x.z})),fmtV:x=>fmt(x,1)})}</section>`;
+ h+=`<section class="mcard"><div class="mc-h"><h3>Potenza Nominale</h3><span class="m-un">Per zona (MW)</span></div>${barChart({w:inner,labelW:60,rowH:42,bh:28,lbl:46,items:zs.map(x=>({label:x.z,value:x.v,color:C.vp,act:'zona',v:x.z})),fmtV:x=>fmt(x,1)})}</section>`;
  return h;
 }
 function mScost(){
@@ -718,13 +718,13 @@ function mScost(){
  const cards=[['Oggi (12:00)',DS.oggi],['Mese corrente',DS.month],['Da inizio anno',DS.ytd]];
  h+=`<div class="m-three">${cards.map(([t,ds])=>{const a=agg(ds,sel),dec=ds===DS.ytd?0:1;return `<div class="mcard m3"><div class="m3-l">${t}</div><div class="m3-v" style="color:${a.d<0?C.navy:C.verde}">${sel.length?fmtS(a.d)+'%':'–'}</div><div class="m3-d" style="color:${a.dm<0?C.red:C.verde}">${sel.length?fmtS(a.dm,dec)+' MWh':''}</div></div>`;}).join('')}</div>`;
  const mc=monthCum(sel);const cats=Array.from({length:28},(_,i)=>String(i+1));
- h+=`<section class="mcard"><div class="mc-h"><h3>Mese corrente: produzione cumulata (MWh)</h3></div><div class="mchart">${lineChart('cum',{w:inner,h:250,cats,series:[{name:'Produzione',color:C.azz,values:mc.act,markEvery:9},{name:'Piano',color:C.yel,values:mc.plan,markEvery:9}],xLabels:[0,6,13,20,27],xLabelEvery:99,fmtV:v=>fmt(v,1)+' MWh',tipTitle:i=>'Ottobre · giorno '+(i+1),tipExtra:i=>`<br>Δ vs piano: <b>${fmtS(pct(mc.act[i],mc.plan[i]))}%</b>`,pad:{l:38,r:16,t:12,b:30}})}</div><div class="chartleg m-cl"><span><i style="background:${C.azz}"></i>Produzione</span><span><i style="background:${C.yel}"></i>Piano</span></div></section>`;
+ h+=`<section class="mcard"><div class="mc-h"><h3>Mese corrente: produzione cumulata (MWh)</h3></div><div class="mchart">${lineChart('cum',{w:inner,h:250,cats,series:[{name:'Produzione',color:C.azz,values:mc.act,markEvery:9},{name:'Nominale',color:C.yel,values:mc.plan,markEvery:9}],xLabels:[0,6,13,20,27],xLabelEvery:99,fmtV:v=>fmt(v,1)+' MWh',tipTitle:i=>'Ottobre · giorno '+(i+1),tipExtra:i=>`<br>Δ vs Nominale: <b>${fmtS(pct(mc.act[i],mc.plan[i]))}%</b>`,pad:{l:38,r:16,t:12,b:30}})}</div><div class="chartleg m-cl"><span><i style="background:${C.azz}"></i>Produzione</span><span><i style="background:${C.yel}"></i>Nominale</span></div></section>`;
  const ds=DS[S.period],dec=S.period==='ytd'?0:1;
  const ttl={oggi:'oggi (MWh)','7gg':'media 7 gg (MWh/g)','30gg':'media 30 gg (MWh/g)',ytd:'da inizio anno (MWh)'}[S.period];
  const rows=sel.map(p=>({p,a:ds.act[p.id],pl:ds.plan[p.id],d:pct(ds.act[p.id],ds.plan[p.id])}));
- h+=`<section class="mcard"><div class="mc-h"><h3>Dettaglio per impianto · ${ttl}</h3></div><table class="t m-t"><thead><tr><th>Impianto</th><th class="r">Prod.</th><th class="r">Piano</th><th class="r">Δ %</th></tr></thead><tbody>${rows.map(r=>`<tr class="row" data-act="gotodetail" data-v="${r.p.id}"><td>${r.p.short}${r.p.note!=='–'?`<small>${r.p.note}</small>`:''}</td><td class="r">${fmt(r.a,dec)}</td><td class="r">${fmt(r.pl,dec)}</td><td class="r" style="color:${dcol(r.d)};font-weight:800">${fmtS(r.d)}%</td></tr>`).join('')}</tbody></table>${rows.length?'':'<div class="m-empty">Nessun impianto selezionato</div>'}`;
+ h+=`<section class="mcard"><div class="mc-h"><h3>Dettaglio per impianto · ${ttl}</h3></div><table class="t m-t"><thead><tr><th>Impianto</th><th class="r">Prod.</th><th class="r">Nominale</th><th class="r">Δ %</th></tr></thead><tbody>${rows.map(r=>`<tr class="row" data-act="gotodetail" data-v="${r.p.id}"><td>${r.p.short}${r.p.note!=='–'?`<small>${r.p.note}</small>`:''}</td><td class="r">${fmt(r.a,dec)}</td><td class="r">${fmt(r.pl,dec)}</td><td class="r" style="color:${dcol(r.d)};font-weight:800">${fmtS(r.d)}%</td></tr>`).join('')}</tbody></table>${rows.length?'':'<div class="m-empty">Nessun impianto selezionato</div>'}`;
  const worst=[...rows].sort((a,b)=>a.d-b.d)[0];
- if(worst){const bad=worst.d<-2,dm=worst.a-worst.pl;const txt=bad?`${worst.p.short}: ${fmtS(dm,dec)} MWh${worst.p.alarms.length?', con allarmi inverter':worst.p.note!=='–'?`, ${worst.p.note.toLowerCase()}`:''}`:'Tutti gli impianti in linea con il piano';h+=`<div class="m-insight" style="background:${bad?'#FDECEF':'#E7F3DF'};color:${bad?C.red:'#2F6B12'}">${esc(txt)}</div>`;}
+ if(worst){const bad=worst.d<-2,dm=worst.a-worst.pl;const txt=bad?`${worst.p.short}: ${fmtS(dm,dec)} MWh${worst.p.alarms.length?', con allarmi inverter':worst.p.note!=='–'?`, ${worst.p.note.toLowerCase()}`:''}`:'Tutti gli impianti in linea con il Nominale';h+=`<div class="m-insight" style="background:${bad?'#FDECEF':'#E7F3DF'};color:${bad?C.red:'#2F6B12'}">${esc(txt)}</div>`;}
  h+=`</section>`;
  return h;
 }
@@ -757,7 +757,7 @@ function mDetail(){
  const act=ds.act[p.id],plan=ds.plan[p.id],pc=act/plan*100,dm=act-plan,dec=S.period==='ytd'?0:1;
  const pl={oggi:'oggi','7gg':'7 gg (media/giorno)','30gg':'30 gg (media/giorno)',ytd:'YTD'}[S.period];
  let h=`<div class="m-status"><div class="chip ok" style="gap:6px"><i class="m-dot"></i>In funzione</div>${p.alarms.length?`<button class="chip al" data-act="alarmpop">⚠&nbsp; ${p.alarms.length} allarm${p.alarms.length===1?'e':'i'}</button>`:`<div class="chip none">Nessun allarme</div>`}</div>`;
- h+=`<section class="mcard m-donut"><div class="mc-h"><h3>Realizzato vs piano · ${pl}</h3></div><div class="m-dwrap">${donut(pc,180,46)}<div class="m-dc">${fmt(pc,0)}%</div></div><div class="m-note c">Produzione ${fmt(act,dec)} MWh · Piano ${fmt(plan,dec)} MWh</div><div class="m-note c" style="font-weight:800;color:${dm<0?C.red:C.verde}">${fmtS(dm,dec)} MWh vs produzione attesa</div></section>`;
+ h+=`<section class="mcard m-donut"><div class="mc-h"><h3>Potenza Prodotta vs Nominale · ${pl}</h3></div><div class="m-dwrap">${donut(pc,180,46)}<div class="m-dc">${fmt(pc,0)}%</div></div><div class="m-note c">Produzione ${fmt(act,dec)} MWh · Nominale ${fmt(plan,dec)} MWh</div><div class="m-note c" style="font-weight:800;color:${dm<0?C.red:C.verde}">${fmtS(dm,dec)} MWh vs produzione attesa</div></section>`;
  const allAct=agg(ds,PLANTS).act,share=act/allAct,k=KP[S.period],pot=k.pot*share;
  const prv=k.pr-PLANTS.reduce((s,x)=>s+ds.plan[x.id]*x.pr,0)/agg(ds,PLANTS).plan;
  h+=`<section class="mcard"><div class="mc-h"><h3>Dati Generali</h3></div><div class="m-tiles t2">${mt(IM('bulb'),`${fmt(pot,2)} MW`,`Potenza media · ${fmt(pot/p.mwp*100,0)}%`)}${mt(IM('sun'),`${fmt(p.irr,0)} W/m²`,'Irradianza',`Vento ${fmt(p.wind,1)} m/s`)}${mt(IM('co2'),`${fmt(k.co2*share,1)} t`,'CO₂ evitata')}${mt(TRAIN(),`${fmt(k.km*share,0)} km`,'Km treno')}${mt(IM('growth'),`${fmt(p.pr+prv,1)}%`,'Performance ratio')}</div></section>`;
@@ -794,7 +794,7 @@ function mSheet(){
  }else if(S.sheet.startsWith('plant:')){
   const p=PBY[S.sheet.slice(6)],ds=DS[S.cmp==='custom'?'oggi':S.period],d=pct(ds.act[p.id],ds.plan[p.id]),on=S.plant===p.id;
   title=`Impianto FV · ${p.short}`;
-  body=`<div class="m-pl"><img src="${ICON.building}" alt=""><div><div class="m-pm">${fmt(p.mwp,1)} MW</div><div class="m-pt">Fotovoltaico · ${p.region} · Zona ${p.zone}</div></div></div><div class="m-pd">Produzione vs Piano <b style="color:${dcol(d)}">${fmtS(d)}%</b></div><div class="m-act"><button class="mbtn ghost" data-act="plantsel" data-v="${p.id}">${on?'Rimuovi filtro':'Filtra su questo impianto'}</button><button class="mbtn" data-act="gotodetail" data-v="${p.id}">Apri dettaglio</button></div>`;
+  body=`<div class="m-pl"><img src="${ICON.building}" alt=""><div><div class="m-pm">${fmt(p.mwp,1)} MW</div><div class="m-pt">Fotovoltaico · ${p.region} · Zona ${p.zone}</div></div></div><div class="m-pd">Potenza Prodotta vs Nominale <b style="color:${dcol(d)}">${fmtS(d)}%</b></div><div class="m-act"><button class="mbtn ghost" data-act="plantsel" data-v="${p.id}">${on?'Rimuovi filtro':'Filtra su questo impianto'}</button><button class="mbtn" data-act="gotodetail" data-v="${p.id}">Apri dettaglio</button></div>`;
  }
  return `<div class="m-back" data-act="sheet" data-v=""></div><div class="m-sheet"><div class="m-grab"></div><div class="m-sh-h"><h3>${esc(title)}</h3><button class="m-x" data-act="sheet" data-v="">✕</button></div>${body}</div>`;
 }
